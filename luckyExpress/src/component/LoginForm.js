@@ -18,11 +18,13 @@ export default class LoginForm extends React.Component {
 			codeButtonColor: '#f55064',
 			phone: '',
 			code: '',
+			codeButtonValue: '获取验证码',
 			codeButtonDisabled: true,
 			loginButtonDisabled: true,
 			phoneError: ' ',
 			codeError: ' ',
 		}
+		this.timeOutButton = this.timeOutButton.bind(this);
 	}
 
 	changePhone(phone) {
@@ -38,14 +40,34 @@ export default class LoginForm extends React.Component {
 
 	}
 
-	getCode() {
+	timeOutButton(t) {
+		if (t >= 0) {
+			this.setState({
+				codeButtonValue: t + '秒后获取验证码'
+			})
+			setTimeout(() => this.timeOutButton(t - 1), 1000);
+		} else {
+			this.setState({
+				codeButtonDisabled: false,
+				codeButtonValue: '获取验证码'
+			})
+		}
+
+	}
+
+	getCode(t = 60) {
 		let phone = this.state.phone;
 		if (phone.length != 11) {
 			Alert.alert('错误！', '请输入正确的手机号！', );
+			return false;
 		} else {
 			Alert.alert('Tips', '模拟的验证码为123456');
+			this.setState({
+				codeButtonDisabled: true,
+			})
+			this.timeOutButton(60);
 		}
-		return false;
+		return true;
 	}
 
 	codeIsTrue() {
@@ -110,7 +132,7 @@ export default class LoginForm extends React.Component {
 						keyboardType='numeric'
 						style={styles.formInput}/>
 					<Button
-						title='获取验证码'
+						title={this.state.codeButtonValue}
 						borderRadius={20}
 						backgroundColor={this.state.codeButtonColor}
 						disabled={this.state.codeButtonDisabled}
