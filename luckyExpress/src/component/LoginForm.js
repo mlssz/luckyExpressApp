@@ -6,11 +6,17 @@ import {
 	Text,
 	TextInput,
 	Alert,
-	AsyncStorage
+	AsyncStorage,
+	PermissionsAndroid
 } from 'react-native';
 import {
 	Button
 } from 'react-native-elements';
+import config from '../config.js'
+
+
+let api = config.api;
+
 export default class LoginForm extends React.Component {
 	constructor(props) {
 		super(props);
@@ -78,7 +84,8 @@ export default class LoginForm extends React.Component {
 			return false;
 	}
 
-	login() {
+	isLogin() {
+		this.login();
 		let phone = this.state.phone;
 		if (phone.length != 11) {
 			this.setState({
@@ -87,19 +94,24 @@ export default class LoginForm extends React.Component {
 			return false
 		}
 		if (this.codeIsTrue()) {
-			let token = 'lcjTem';
-			let timestamp = new Date().getTime().toString();
-			AsyncStorage.multiSet([
-				['phone', phone],
-				['token', token],
-				['timestamp', timestamp]
-			], () => console.log('loginSuccess'));
-			this.props.navigator.pop();
+
+			// let token = 'lcjTem';
+			// let timestamp = new Date().getTime().toString();
+			// AsyncStorage.multiSet([
+			// 	['phone', phone],
+			// 	['token', token],
+			// 	['timestamp', timestamp]
+			// ], () => console.log('loginSuccess'));
+			// this.props.navigator.pop();
 		} else {
 			this.setState({
 				codeError: '请输入正确的验证码！'
 			})
 		}
+	}
+
+	async login() {
+
 	}
 
 	render() {
@@ -148,7 +160,7 @@ export default class LoginForm extends React.Component {
 						borderRadius={20}
 						backgroundColor='#4192e3'
 						title='登录'
-						onPress={this.login.bind(this)}/>
+						onPress={this.isLogin.bind(this)}/>
 				</View>
 
 			</View>

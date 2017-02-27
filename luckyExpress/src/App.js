@@ -4,6 +4,7 @@ import {
 	View
 } from 'react-native';
 import MainPage from './pages/MainPage.js'
+import Test from './pages/test.js'
 
 export default class App extends React.Component {
 	constructor(props) {

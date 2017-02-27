@@ -4,13 +4,26 @@ import {
 	StyleSheet,
 	Dimensions,
 	Image,
-	Text
+	Text,
+	TouchableOpacity
 } from 'react-native';
+import CompleteOrder from '../pages/CompleteOrder.js'
 
 let ITEMHEIGHT = 100;
 export default class CarItem extends React.Component {
 	constructor(props) {
 		super(props);
+		this.selected = this.selected.bind(this);
+	}
+
+	selected(car) {
+		let navigator = this.props.navigator;
+		navigator.push({
+			component: CompleteOrder,
+			params: {
+				car: car
+			}
+		})
 	}
 
 	render() {
@@ -26,7 +39,7 @@ export default class CarItem extends React.Component {
 			cornerColor: this.props.cornerColor,
 		}
 		return (
-			<View style={styles.item}>
+			<TouchableOpacity style={styles.item} activeOpacity={0.6} onPress={()=>this.selected(car)}>
 				<View style={styles.leftItem}>
 					<View style={[styles.cornerColor,{backgroundColor:car.cornerColor}]}></View>
 					<View style={styles.imgView}>
@@ -45,7 +58,7 @@ export default class CarItem extends React.Component {
 					<Text style={styles.text}>长*宽*高：{car.length}*{car.width}*{car.height}m</Text>
 					<Text style={styles.text}>超公里费：{car.beyondPrice}元/1公里</Text>
 				</View>
-			</View>
+			</TouchableOpacity>
 		)
 	}
 }

@@ -59,8 +59,7 @@ export default class SelfPage extends React.Component {
 	}
 
 	validLogin(arr) {
-		console.log(arr)
-		if (arr.length < 3)
+		if (!arr.phone)
 			return false;
 		let phone = arr[0][1];
 		let token = arr[1][1];

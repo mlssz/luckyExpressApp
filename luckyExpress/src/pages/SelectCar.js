@@ -16,8 +16,9 @@ export default class SelectCar extends React.Component {
 
 	renderCars() {
 		let cars = config.cars;
+		let navigator = this.props.navigator;
 		return (
-			cars.map((car, i) => <CarItem {...car} key={car.name}/>)
+			cars.map((car, i) => <CarItem {...car} key={car.name} navigator={navigator}/>)
 		)
 	}
 

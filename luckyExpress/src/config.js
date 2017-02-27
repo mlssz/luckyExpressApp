@@ -87,5 +87,10 @@ export default config = {
 			title: '客服反馈',
 			page: NoPage,
 		}]
-	]
+	],
+	api: {
+		baiduAK: 'jRsRZ7IjzEeYRiw1LeRNkM3YU140tsY0',
+		searchSuggestionPlace: 'http://api.map.baidu.com/place/v2/suggestion',
+		ipLocate: 'http://api.map.baidu.com/location/ip',
+	}
 }

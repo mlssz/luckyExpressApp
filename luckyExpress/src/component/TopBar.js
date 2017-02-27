@@ -20,6 +20,7 @@ export default class TopBar extends React.Component {
 		title: React.PropTypes.string.isRequired,
 		leftItem: React.PropTypes.element,
 		rightItem: React.PropTypes.element,
+		light: React.PropTypes.bool,
 	}
 
 	backPage() {
@@ -54,8 +55,14 @@ export default class TopBar extends React.Component {
 	}
 
 	render() {
+		let style = {};
+		if (this.props.light) {
+			style = {
+				backgroundColor: 'white',
+			}
+		}
 		return (
-			<View style={styles.topbar}>
+			<View style={[styles.topbar,style]}>
 				<View style={[styles.containerView,styles.leftContainer]}>
 					{this.props.back?this.backIcon():this.customLeftItem()}
 				</View>
@@ -77,6 +84,7 @@ let styles = StyleSheet.create({
 		backgroundColor: '#EDEDED',
 		flexDirection: 'row',
 		alignItems: 'center',
+		marginBottom: 10,
 	},
 	containerView: {
 		flex: 1,
