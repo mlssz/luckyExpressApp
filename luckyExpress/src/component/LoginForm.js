@@ -14,7 +14,6 @@ import {
 } from 'react-native-elements';
 import config from '../config.js'
 
-
 let api = config.api;
 
 export default class LoginForm extends React.Component {
@@ -31,6 +30,7 @@ export default class LoginForm extends React.Component {
 			codeError: ' ',
 		}
 		this.timeOutButton = this.timeOutButton.bind(this);
+		this.doLogin = this.doLogin.bind(this);
 	}
 
 	changePhone(phone) {
@@ -85,7 +85,6 @@ export default class LoginForm extends React.Component {
 	}
 
 	isLogin() {
-		this.login();
 		let phone = this.state.phone;
 		if (phone.length != 11) {
 			this.setState({
@@ -94,7 +93,13 @@ export default class LoginForm extends React.Component {
 			return false
 		}
 		if (this.codeIsTrue()) {
-
+			navigator.geolocation.getCurrentPosition(
+				(data) => this.doLogin(data, phone),
+				(err) => console.log(err), {
+					enableHighAccuracy: false,
+					timeout: 10000,
+				}
+			);
 			// let token = 'lcjTem';
 			// let timestamp = new Date().getTime().toString();
 			// AsyncStorage.multiSet([
@@ -110,8 +115,41 @@ export default class LoginForm extends React.Component {
 		}
 	}
 
-	async login() {
+	doLogin(data, phone) {
+		let x = data.coords.latitude;
+		let y = data.coords.longitude;
+		let position = '&position=' + x + ',' + y;
+		let oriTime = new Date().getTime().toString()
+		let timestamp = '&timestamp=' + oriTime;
+		let url = api.login + '?account=' + phone + position + timestamp;
 
+		let request = new XMLHttpRequest();
+		request.onreadystatechange = (e) => {
+			if (request.readyState !== 4) {
+				return;
+			}
+			if (request.status === 200) {
+				let res = JSON.parse(request.responseText);
+				if (res.status == 0)
+					return false;
+				let cont = res.rental;
+				let arr = [
+					['phone', phone],
+					['token', cont.token],
+					['timestamp', oriTime],
+					['position', x + ',' + y],
+					['id', cont.id.toString()]
+				];
+				AsyncStorage.multiSet(arr, (e) => console.log('error inf:', e));
+				this.props.navigator.pop();
+
+			} else {
+				console.warn('error');
+			}
+		};
+
+		request.open('GET', url);
+		request.send();
 	}
 
 	render() {

@@ -35,20 +35,21 @@ export default class SelfPage extends React.Component {
 
 	toPage(page, title) {
 		let navigator = this.props.navigator;
-		if (navigator)
+		if (navigator) {
 			navigator.push({
 				name: title,
 				component: page,
 			})
+		}
 	}
 
 	logIn() {
 		let navigator = this.props.navigator;
-		if (this.state.token === null)
+		if (navigator) {
 			navigator.push({
-				name: 'login',
 				component: Login,
 			})
+		}
 	}
 
 	renderGroup() {
@@ -59,11 +60,12 @@ export default class SelfPage extends React.Component {
 	}
 
 	validLogin(arr) {
-		if (!arr.phone)
+		if (!arr[0][1])
 			return false;
 		let phone = arr[0][1];
 		let token = arr[1][1];
 		let timestamp = Number.parseInt(arr[2][1]);
+		let id = arr[3][1];
 		let nowTime = new Date().getTime();
 		let days = (nowTime - timestamp) / (1000 * 60 * 60 * 24);
 		if (days >= 30)
@@ -76,7 +78,7 @@ export default class SelfPage extends React.Component {
 	}
 
 	render() {
-		AsyncStorage.multiGet(['phone', 'token', 'timestamp']).then((arr) => this.validLogin(arr));
+		AsyncStorage.multiGet(['phone', 'token', 'timestamp', 'id']).then((arr) => this.validLogin(arr));
 		let phone = this.state.phone;
 		let token = this.state.token;
 		return (

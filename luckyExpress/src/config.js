@@ -91,6 +91,6 @@ export default config = {
 	api: {
 		baiduAK: 'jRsRZ7IjzEeYRiw1LeRNkM3YU140tsY0',
 		searchSuggestionPlace: 'http://api.map.baidu.com/place/v2/suggestion',
-		ipLocate: 'http://api.map.baidu.com/location/ip',
+		login: 'http://www.oeli.pub:80/haoyun/s/rent/login.json',
 	}
 }

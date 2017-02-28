@@ -8,7 +8,7 @@ import TopBar from '../component/TopBar.js'
 export default class NoPage extends React.Component {
 
 	logOut() {
-		AsyncStorage.multiRemove(['phone', 'token'], () => console.log('log out'));
+		AsyncStorage.multiRemove(['phone', 'token', 'timestamp', 'id'], () => console.log('log out'));
 	}
 
 	render() {

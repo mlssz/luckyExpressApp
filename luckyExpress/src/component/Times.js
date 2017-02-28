@@ -18,11 +18,18 @@ export default class Times extends React.Component {
 			useTime: '现在',
 			visible: false,
 		}
+		this.closeTime = this.closeTime.bind(this);
 	}
 
 	openTime() {
 		this.setState({
 			visible: true,
+		})
+	}
+
+	closeTime() {
+		this.setState({
+			visible: false,
 		})
 	}
 
@@ -40,7 +47,8 @@ export default class Times extends React.Component {
 				</View>
 				<TimePicker 
 					visible={this.state.visible}
-					animationType='slide'/>
+					animationType='slide'
+					closeTime={this.closeTime}/>
 			</TouchableOpacity>
 		)
 	}

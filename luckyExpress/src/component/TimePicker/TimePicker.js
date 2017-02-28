@@ -12,7 +12,6 @@ export default class TimePicker extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			visible: this.props.visible,
 			animationType: this.props.animationType,
 			transparent: this.props.transparent,
 			onRequestClose: this.props.onRequestClose,
@@ -28,9 +27,7 @@ export default class TimePicker extends React.Component {
 	}
 
 	closeModal() {
-		this.setState({
-			visible: false,
-		})
+		this.props.closeTime();
 	}
 
 	ensureModal() {
@@ -41,7 +38,7 @@ export default class TimePicker extends React.Component {
 
 		return (
 			<Modal
-				visible={this.state.visible}
+				visible={this.props.visible}
 				animationType={this.state.animationType}
           		transparent={this.state.transparent}
           		onRequestClose={this.state.onRequestClose}>
