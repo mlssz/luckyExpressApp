@@ -1,181 +1,190 @@
-'use strict';
+/**
+ * @author lovebing
+ */
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
-  Modal,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableHighlight,
-  View,
-} = ReactNative;
+import React, {
+    Component,
+    PropTypes
+} from 'react';
 
-exports.displayName = (undefined: ? string);
-exports.framework = 'React';
-exports.title = '<Modal>';
-exports.description = 'Component for presenting modal views.';
+import {
+    MapView,
+    MapTypes,
+    Geolocation
+} from 'react-native-baidu-map';
 
-var Button = React.createClass({
-  getInitialState() {
-    return {
-      active: false,
+import {
+    AppRegistry,
+    StyleSheet,
+    Text,
+    View,
+    TouchableHighlight
+} from 'react-native';
+
+import Dimensions from 'Dimensions';
+
+class Buttton extends Component {
+    static propTypes = {
+        label: PropTypes.string,
+        onPress: PropTypes.func
     };
-  },
 
-  _onHighlight() {
-    this.setState({
-      active: true
-    });
-  },
+    static defaultProps = {
+        label: 'Buttton',
+        onPress() {
 
-  _onUnhighlight() {
-    this.setState({
-      active: false
-    });
-  },
-
-  render() {
-    var colorStyle = {
-      color: this.state.active ? '#fff' : '#000',
+        }
     };
-    return (
-      <TouchableHighlight
-        onHideUnderlay={this._onUnhighlight}
-        onPress={this.props.onPress}
-        onShowUnderlay={this._onHighlight}
-        style={[styles.button, this.props.style]}
-        underlayColor="#a9d9d4">
-          <Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
+    render() {
+        return (
+            <TouchableHighlight 
+        style={styles.btn}
+        onPress={this.props.onPress}>
+        <Text style={{color: 'white'}}>{this.props.label}</Text>
       </TouchableHighlight>
-    );
-  }
-});
+        );
+    }
+};
 
-var ModalExample = React.createClass({
-  getInitialState() {
-    return {
-      animationType: 'none',
-      modalVisible: false,
-      transparent: false,
-    };
-  },
+export default class BaiduMapDemo extends Component {
 
-  _setModalVisible(visible) {
-    this.setState({
-      modalVisible: visible
-    });
-  },
+    constructor() {
+        super();
 
-  _setAnimationType(type) {
-    this.setState({
-      animationType: type
-    });
-  },
+        this.state = {
+            mayType: MapTypes.NORMAL,
+            zoom: 15,
+            center: {
+                longitude: 113.981718,
+                latitude: 22.542449
+            },
+            trafficEnabled: false,
+            baiduHeatMapEnabled: false,
+            markers: [{
+                longitude: 113.981718,
+                latitude: 22.542449,
+                title: "Window of the world"
+            }, {
+                longitude: 113.995516,
+                latitude: 22.537642,
+                title: ""
+            }]
+        };
+    }
 
-  _toggleTransparent() {
-    this.setState({
-      transparent: !this.state.transparent
-    });
-  },
+    render() {
+        return (
+            <View style={styles.container}>
+        <MapView 
+          trafficEnabled={this.state.trafficEnabled}
+          baiduHeatMapEnabled={this.state.baiduHeatMapEnabled}
+          zoom={this.state.zoom}
+          mapType={this.state.mapType}
+          center={this.state.center}
+          marker={this.state.marker}
+          markers={this.state.markers}
+          style={styles.map}
+          onMapClick={(e) => {
+          }}
+        >
+        </MapView>
 
-  render() {
-    var modalBackgroundStyle = {
-      backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
-    };
-    var innerContainerTransparentStyle = this.state.transparent ? {
-      backgroundColor: '#fff',
-      padding: 20
-    } : null;
-    var activeButtonStyle = {
-      backgroundColor: '#ddd'
-    };
-
-    return (
-      <View>
-        <Modal
-          animationType={this.state.animationType}
-          transparent={this.state.transparent}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {this._setModalVisible(false)}}
-          >
-          <View style={[styles.container, modalBackgroundStyle]}>
-            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-              <Text>This modal was presented {this.state.animationType === 'none' ? 'without' : 'with'} animation.</Text>
-              <Button
-                onPress={this._setModalVisible.bind(this, false)}
-                style={styles.modalButton}>
-                Close
-              </Button>
-            </View>
-          </View>
-        </Modal>
         <View style={styles.row}>
-          <Text style={styles.rowTitle}>Animation Type</Text>
-          <Button onPress={this._setAnimationType.bind(this, 'none')} style={this.state.animationType === 'none' ? activeButtonStyle : {}}>
-            none
-          </Button>
-          <Button onPress={this._setAnimationType.bind(this, 'slide')} style={this.state.animationType === 'slide' ? activeButtonStyle : {}}>
-            slide
-          </Button>
-          <Button onPress={this._setAnimationType.bind(this, 'fade')} style={this.state.animationType === 'fade' ? activeButtonStyle : {}}>
-            fade
-          </Button>
+          <Buttton label="Normal" onPress={() => {
+            this.setState({
+              mapType: MapTypes.NORMAL
+            });
+          }} />
+          <Buttton label="Satellite" onPress={() => {
+            this.setState({
+              mapType: MapTypes.SATELLITE
+            });
+          }} />
+
+          <Buttton label="Locate" onPress={() => {
+            Geolocation.getCurrentPosition()
+              .then(data => {
+                this.setState({
+                  zoom: 15,
+                  marker: {
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    title: 'Your location'
+                  },
+                  center: {
+                    latitude: data.latitude,
+                    longitude: data.longitude
+                  }
+                });
+              })
+              .catch(e =>{
+                console.warn(e, 'error');
+              })
+          }} />
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.rowTitle}>Transparent</Text>
-          <Switch value={this.state.transparent} onValueChange={this._toggleTransparent} />
+          <Buttton label="Zoom+" onPress={() => {
+            this.setState({
+              zoom: this.state.zoom + 1
+            });
+          }} />
+          <Buttton label="Zoom-" onPress={() => {
+            if(this.state.zoom > 0) {
+              this.setState({
+                zoom: this.state.zoom - 1
+              });
+            }
+            
+          }} />
         </View>
 
-        <Button onPress={this._setModalVisible.bind(this, true)}>
-          Present
-        </Button>
+        <View style={styles.row}>
+          <Buttton label="Traffic" onPress={() => {
+            this.setState({
+              trafficEnabled: !this.state.trafficEnabled
+            });
+          }} />
+
+          <Buttton label="Baidu HeatMap" onPress={() => {
+            this.setState({
+              baiduHeatMapEnabled: !this.state.baiduHeatMapEnabled
+            });
+          }} />
+
+
+        </View>
+
+
       </View>
-    );
-  },
-});
+        );
+    }
+}
 
-exports.examples = [{
-  title: 'Modal Presentation',
-  description: 'Modals can be presented with or without animation',
-  render: () => <ModalExample />,
-}, ];
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  innerContainer: {
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  row: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  rowTitle: {
-    flex: 1,
-    fontWeight: 'bold',
-  },
-  button: {
-    borderRadius: 5,
-    flex: 1,
-    height: 44,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  buttonText: {
-    fontSize: 18,
-    margin: 5,
-    textAlign: 'center',
-  },
-  modalButton: {
-    marginTop: 10,
-  },
+const styles = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+    },
+    btn: {
+        height: 24,
+        borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#cccccc',
+        paddingLeft: 8,
+        paddingRight: 8,
+        margin: 4
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+    map: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height - 200,
+        marginBottom: 16
+    }
 });

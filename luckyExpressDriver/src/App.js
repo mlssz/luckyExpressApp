@@ -4,22 +4,38 @@ import {
 	View,
 	AsyncStorage
 } from 'react-native';
+import Storage from 'react-native-storage';
 import MainPage from './pages/Login.js'
 import Login from './pages/Login.js'
 
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			token: null,
+		}
 	}
 
 	configureScene(route) {
 		return route.scene || Navigator.SceneConfigs.FloatFromBottom
 	}
 
+	componentWillMount() {
+		storage.load({
+			key: 'loginState',
+		}).then((res) => {
+			if (res !== null) {
+				let token = res.token;
+				this.setState({
+					token
+				});
+			}
+		}).catch((err) => console.warn(err));
+	}
+
 	render() {
-		let token = AsyncStorage.getItem('token', (err) => console.log(err));
 		let defaultName = 'firstPage';
-		let defaultPage = token ? MainPage : Login;
+		let defaultPage = this.state.token ? MainPage : Login;
 		// let defaultPage = Test;
 		return (
 			<View style={{flex:1}}>
@@ -36,3 +52,9 @@ export default class App extends React.Component {
 		)
 	}
 }
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+})

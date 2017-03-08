@@ -2,7 +2,6 @@ import React from 'react';
 import TopBar from '../component/TopBar.js'
 import CarItem from '../component/CarItem.js'
 import config from '../config.js'
-
 import {
 	View,
 	ScrollView,

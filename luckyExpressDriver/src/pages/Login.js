@@ -5,19 +5,28 @@ import {
 	Image,
 	Dimensions,
 	StyleSheet,
+	AsyncStorage,
 	TouchableOpacity
 } from 'react-native';
+import Storage from 'react-native-storage';
 import FormElement from '../component/FormElement.js'
 import Register from './Register.js'
+import CompleteInf from './CompleteInf.js';
+import config from '../config.js'
+
+let api = config.api;
 
 export default class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			phone: '',
-			psw: '',
+			phone: '18768115873',
+			psw: '18768115873',
+			err: ' ',
 		}
-		this.register = this.register.bind(this)
+		this.register = this.register.bind(this);
+		this.readyLogin = this.readyLogin.bind(this);
+		this.login = this.login.bind(this);
 	}
 
 	register() {
@@ -27,6 +36,69 @@ export default class Login extends React.Component {
 				component: Register,
 			})
 	}
+
+	async login(position) {
+		let phone = 'phone=' + this.state.phone;
+		let positionX = '&positionx=' + position.coords.latitude;
+		let positionY = '&positiony=' + position.coords.longitude;
+		let psw = '&password=' + this.state.phone;
+		let body = phone + positionY + positionX + psw;
+		let url = api.login;
+		try {
+			let res = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: body
+			});
+			var data = res.json();
+		} catch (e) {
+			console.log('error', e);
+		}
+
+		data.then((data) => {
+			if (data.status === 0) {
+				this.setState({
+					err: data.msg
+				});
+			} else {
+				let id = data.lessee.id.toString();
+				let phone = data.lessee.account.toString();
+				let token = data.lessee.token.toString();
+				storage.save({
+					key: 'loginState',
+					rawData: {
+						phone: phone,
+						id: id,
+						token: token,
+					},
+				});
+				this.goNextPage();
+			}
+		})
+	}
+
+	goNextPage() {
+		let navigator = this.props.navigator;
+		if (navigator)
+			this.props.navigator.push({
+				component: CompleteInf,
+			})
+	}
+
+	readyLogin() {
+		navigator.geolocation.getCurrentPosition(
+			(data) => this.login(data),
+			(error) => alert(error.message), {
+				enableHighAccuracy: true,
+				timeout: 20000,
+				maximumAge: 1000
+			}
+		);
+	}
+
 	render() {
 		return (
 			<Image source={require('../img/bg_1.png')} style={styles.backgroundImg}>
@@ -43,9 +115,11 @@ export default class Login extends React.Component {
 						value={this.state.psw}
 						onChangeText={(psw)=>this.setState({psw})}
 						secureTextEntry/>
+					<Text style={{textAlign:'center',color:'red'}}>{this.state.err}</Text>
 					<TouchableOpacity 
 						style={styles.button}
-						activeOpacity={0.8}>
+						activeOpacity={0.8}
+						onPress={this.readyLogin}>
 						<Text style={styles.buttonText}>登录</Text>
 					</TouchableOpacity>
 					<Text style={styles.registerText} onPress={this.register}>
@@ -90,4 +164,10 @@ let styles = StyleSheet.create({
 		textDecorationStyle: 'solid',
 		letterSpacing: 20,
 	}
+})
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
 })

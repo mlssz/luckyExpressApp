@@ -5,36 +5,148 @@ import {
 	Image,
 	Dimensions,
 	StyleSheet,
+	AsyncStorage,
 	TouchableOpacity
 } from 'react-native';
+import Storage from 'react-native-storage';
 import FormElement from '../component/FormElement.js'
 import TopBar from '../component/TopBar.js'
 import CompleteInf from './CompleteInf.js'
+import {
+	Geolocation
+} from 'react-native-baidu-map'
+import config from '../config.js'
+let api = config.api;
 
 export default class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			phone: '',
+			phone: '18768115873',
 			code: '',
+			codeButtonContent: '获取验证码',
+			codeButtonDisabled: true,
+			err: ' ',
 		}
 		this.renderRightEle = this.renderRightEle.bind(this);
 		this.completeInf = this.completeInf.bind(this);
+		this.enterPhone = this.enterPhone.bind(this);
+		this.getCode = this.getCode.bind(this);
+		this.goNextPage = this.goNextPage.bind(this);
+		this.changeCodeButton = this.changeCodeButton.bind(this);
 	}
 
 	renderRightEle() {
+		let backgroundColor = this.state.codeButtonDisabled ? 'gray' : '#FD225B';
 		return (
-			<TouchableOpacity style={styles.getCodeButton}>
-				<Text style={styles.buttonText}>获取验证码</Text>
+			<TouchableOpacity 
+				style={[styles.getCodeButton,{backgroundColor:backgroundColor}]}
+				disabled={this.state.codeButtonDisabled}
+				onPress={this.getCode}>
+				<Text style={styles.buttonText}>{this.state.codeButtonContent}</Text>
 			</TouchableOpacity>
 		)
 	}
 
-	completeInf() {
+	changeCodeButton(times) {
+		if (times > 0) {
+			this.setState({
+				codeButtonContent: times + 's后获取验证码'
+			});
+		} else {
+			this.setState({
+				codeButtonContent: '获取验证码',
+				codeButtonDisabled: false,
+			});
+		}
+		setTimeout(() => this.changeCodeButton(--times), 1000)
+	}
+
+	getCode() {
+		let url = api.getCode + '?phone=' + this.state.phone;
+		fetch(url)
+			.then((res) => res.text())
+			.then((res) => console.log(res));
+		this.setState({
+			codeButtonDisabled: true
+		})
+		this.changeCodeButton(60)
+	}
+
+	async register(position) {
+		let phone = 'phone=' + this.state.phone;
+		let positionX = '&positionx=' + position.coords.latitude;
+		let positionY = '&positiony=' + position.coords.longitude;
+		let code = '&code=' + this.state.code;
+		let psw = '&password=' + this.state.phone;
+		let body = phone + positionY + positionX + code + psw;
+		let url = api.register;
+		try {
+			let res = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: body
+			});
+			var data = res.json();
+		} catch (e) {
+			console.log('error', e);
+		}
+
+		data.then((data) => {
+			if (data.status === 0) {
+				this.setState({
+					err: data.msg
+				});
+			} else {
+				let id = data.lessee.id;
+				let phone = data.lessee.account;
+				let token = data.lessee.token;
+				storage.save({
+					key: 'loginState',
+					rawData: {
+						phone: phone,
+						id: id,
+						token: token,
+					},
+				});
+				this.goNextPage();
+			}
+		})
+	}
+
+	goNextPage() {
 		let navigator = this.props.navigator;
 		if (navigator)
 			this.props.navigator.push({
 				component: CompleteInf,
+			})
+	}
+
+	completeInf() {
+		navigator.geolocation.getCurrentPosition(
+			(data) => this.register(data),
+			(error) => alert(error.message), {
+				enableHighAccuracy: true,
+				timeout: 20000,
+				maximumAge: 1000
+			}
+		);
+	}
+
+	enterPhone(phone) {
+		this.setState({
+			phone
+		});
+		if (phone.length === 11)
+			this.setState({
+				codeButtonDisabled: false
+			})
+		else if (!this.state.codeButtonDisabled)
+			this.setState({
+				codeButtonDisabled: true
 			})
 	}
 
@@ -49,14 +161,17 @@ export default class Login extends React.Component {
 							placeholder='11位数字'
 							maxLength={11}
 							value={this.state.phone}
-							onChangeText={(phone)=>this.setState({phone})}/>
+							keyboardType='numeric'
+							onChangeText={(phone)=>this.enterPhone(phone)}/>
 						<FormElement 
 							formInput='验证码' 
 							placeholder='6位数字'
 							value={this.state.code}
 							onChangeText={(code)=>this.setState({code})}
 							maxLength={6}
+							keyboardType='numeric'
 							rightEle={this.renderRightEle()}/>
+						<Text style={{textAlign:'center',color:'red'}}>{this.state.err}</Text>
 						<TouchableOpacity 
 							style={styles.button}
 							activeOpacity={0.8}
@@ -100,8 +215,13 @@ let styles = StyleSheet.create({
 		color: 'white',
 	},
 	getCodeButton: {
-		backgroundColor: '#FD225B',
 		padding: 10,
 		borderRadius: 20,
 	}
 })
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+});

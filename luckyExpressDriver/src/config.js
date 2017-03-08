@@ -91,6 +91,10 @@ export default config = {
 	api: {
 		baiduAK: 'jRsRZ7IjzEeYRiw1LeRNkM3YU140tsY0',
 		searchSuggestionPlace: 'http://api.map.baidu.com/place/v2/suggestion',
-		login: 'http://www.oeli.pub:80/haoyun/s/rent/login.json',
+		register: 'http://www.oeli.pub/haoyun/s/lessee/regist.json',
+		login: 'http://www.oeli.pub/haoyun/s/lessee/login.json',
+		upLoad: 'http://www.oeli.pub/haoyun/s/lessee/upload.json',
+		getCode: 'http://www.oeli.pub/haoyun/s/yzm/yuyin/regist.json',
+		completeInf: 'http://www.oeli.pub/haoyun/s/lessee/finishmyinfo.json',
 	}
 }

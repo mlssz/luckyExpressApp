@@ -17,7 +17,8 @@ export default class App extends React.Component {
 
 	render() {
 		let defaultName = 'firstPage';
-		let defaultPage = MainPage;
+		// let defaultPage = MainPage;
+		let defaultPage = Test;
 		return (
 			<View style={{flex:1}}>
 				<Navigator 
