@@ -7,8 +7,10 @@ import {
 	List,
 	ListItem
 } from 'react-native-elements'
+import Storage from 'react-native-storage';
 import config from '../config.js'
 import Login from './Login.js'
+import NoPage from './NoPage.js'
 export default class SelfPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -45,9 +47,13 @@ export default class SelfPage extends React.Component {
 
 	logIn() {
 		let navigator = this.props.navigator;
-		if (navigator) {
+		if (navigator && !this.state.token) {
 			navigator.push({
 				component: Login,
+			})
+		} else if (navigator) {
+			navigator.push({
+				component: NoPage,
 			})
 		}
 	}
@@ -60,25 +66,21 @@ export default class SelfPage extends React.Component {
 	}
 
 	validLogin(arr) {
-		if (!arr[0][1])
-			return false;
-		let phone = arr[0][1];
-		let token = arr[1][1];
-		let timestamp = Number.parseInt(arr[2][1]);
-		let id = arr[3][1];
-		let nowTime = new Date().getTime();
-		let days = (nowTime - timestamp) / (1000 * 60 * 60 * 24);
-		if (days >= 30)
-			return false;
-		AsyncStorage.setItem('timestamp', nowTime.toString());
 		this.setState({
-			phone,
-			token
+			phone: arr.phone,
+			token: arr.token,
 		})
 	}
 
+	componentWillMount() {
+		storage.load({
+				key: 'loginState'
+			})
+			.then((res) => this.validLogin(res))
+			.catch(res => console.warn(res.message))
+	}
+
 	render() {
-		AsyncStorage.multiGet(['phone', 'token', 'timestamp', 'id']).then((arr) => this.validLogin(arr));
 		let phone = this.state.phone;
 		let token = this.state.token;
 		return (
@@ -89,6 +91,7 @@ export default class SelfPage extends React.Component {
 					<ListItem
 						title={token===null?'登录':phone}
 						hideChevron={true}
+						underlayColor='gray'
 						containerStyle={{backgroundColor:'black'}}
 						leftIcon={{
 								name:'perm-identity',
@@ -103,3 +106,8 @@ export default class SelfPage extends React.Component {
 		)
 	}
 }
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+});

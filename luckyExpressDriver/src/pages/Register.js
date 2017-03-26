@@ -22,7 +22,7 @@ export default class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			phone: '18768115873',
+			phone: '',
 			code: '',
 			codeButtonContent: '获取验证码',
 			codeButtonDisabled: true,
@@ -110,6 +110,7 @@ export default class Login extends React.Component {
 						phone: phone,
 						id: id,
 						token: token,
+						position: JSON.stringify([position.coords.latitude, position.coords.longitude])
 					},
 				});
 				this.goNextPage();
@@ -129,7 +130,7 @@ export default class Login extends React.Component {
 		navigator.geolocation.getCurrentPosition(
 			(data) => this.register(data),
 			(error) => alert(error.message), {
-				enableHighAccuracy: true,
+				enableHighAccuracy: false,
 				timeout: 20000,
 				maximumAge: 1000
 			}

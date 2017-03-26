@@ -17,6 +17,7 @@ export default class TopBar extends React.Component {
 
 	static propTypes = {
 		back: React.PropTypes.bool,
+		backFunc: React.PropTypes.func,
 		title: React.PropTypes.string.isRequired,
 		leftItem: React.PropTypes.element,
 		rightItem: React.PropTypes.element,
@@ -24,9 +25,13 @@ export default class TopBar extends React.Component {
 	}
 
 	backPage() {
-		let nav = this.props.navigator;
-		if (nav)
-			nav.pop();
+		if (!!this.props.backFunc)
+			this.props.backFunc();
+		else {
+			let nav = this.props.navigator;
+			if (nav)
+				nav.pop();
+		}
 	}
 
 	backIcon() {
@@ -84,7 +89,6 @@ let styles = StyleSheet.create({
 		backgroundColor: '#EDEDED',
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 10,
 	},
 	containerView: {
 		flex: 1,

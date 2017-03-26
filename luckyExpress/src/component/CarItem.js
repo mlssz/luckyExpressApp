@@ -5,9 +5,13 @@ import {
 	Dimensions,
 	Image,
 	Text,
-	TouchableOpacity
+	AsyncStorage,
+	TouchableOpacity,
+	Alert
 } from 'react-native';
+import Storage from 'react-native-storage';
 import CompleteOrder from '../pages/CompleteOrder.js'
+import Login from '../pages/Login.js'
 
 let ITEMHEIGHT = 100;
 export default class CarItem extends React.Component {
@@ -17,13 +21,33 @@ export default class CarItem extends React.Component {
 	}
 
 	selected(car) {
-		let navigator = this.props.navigator;
-		navigator.push({
-			component: CompleteOrder,
-			params: {
-				car: car
-			}
-		})
+		storage.load({
+				key: 'loginState'
+			})
+			.then(res => {
+				let navigator = this.props.navigator;
+				navigator.push({
+					component: CompleteOrder,
+					params: {
+						car: car,
+						user: res,
+					}
+				})
+			})
+			.catch(err => {
+				console.log(err)
+				Alert.alert(
+					'请先登录',
+					null, [{
+						text: 'OK',
+						onPress: () => {
+							this.props.navigator.push({
+								component: Login
+							})
+						}
+					}, ]
+				)
+			})
 	}
 
 	render() {
@@ -37,6 +61,7 @@ export default class CarItem extends React.Component {
 			price: this.props.price,
 			beyondPrice: this.props.beyondPrice,
 			cornerColor: this.props.cornerColor,
+			carType: this.props.carType,
 		}
 		return (
 			<TouchableOpacity style={styles.item} activeOpacity={0.6} onPress={()=>this.selected(car)}>
@@ -113,4 +138,10 @@ let styles = StyleSheet.create({
 		fontSize: 12,
 		marginTop: 5,
 	},
-})
+});
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+});

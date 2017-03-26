@@ -96,5 +96,7 @@ export default config = {
 		upLoad: 'http://www.oeli.pub/haoyun/s/lessee/upload.json',
 		getCode: 'http://www.oeli.pub/haoyun/s/yzm/yuyin/regist.json',
 		completeInf: 'http://www.oeli.pub/haoyun/s/lessee/finishmyinfo.json',
+		lesseeChoose: 'http://www.oeli.pub/haoyun/s/order/lesseechoose.json',
+		rentChoose: 'http://www.oeli.pub/haoyun/s/order/rentchoose.json',
 	}
 }

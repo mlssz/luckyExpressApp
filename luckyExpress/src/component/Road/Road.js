@@ -21,6 +21,12 @@ export default class Road extends React.Component {
 		this.deleteRoad = this.deleteRoad.bind(this);
 	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			roads: nextProps.roads
+		})
+	}
+
 	changeRoad(road, index) {
 		let roads = this.state.roads;
 		roads[index] = road;

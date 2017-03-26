@@ -4,7 +4,6 @@ import {
 	StyleSheet,
 	Dimensions,
 	Image,
-	AsyncStorage
 } from 'react-native';
 import TopBar from '../component/TopBar.js';
 import LoginForm from '../component/LoginForm.js'

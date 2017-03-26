@@ -7,13 +7,13 @@ import {
 	TextInput,
 	Alert,
 	AsyncStorage,
-	PermissionsAndroid
 } from 'react-native';
+import Storage from 'react-native-storage';
 import {
 	Button
 } from 'react-native-elements';
 import config from '../config.js'
-
+import SelfPage from '../App.js'
 let api = config.api;
 
 export default class LoginForm extends React.Component {
@@ -21,8 +21,8 @@ export default class LoginForm extends React.Component {
 		super(props);
 		this.state = {
 			codeButtonColor: '#f55064',
-			phone: '',
-			code: '',
+			phone: '18768115873',
+			code: '018621',
 			codeButtonValue: '获取验证码',
 			codeButtonDisabled: true,
 			loginButtonDisabled: true,
@@ -67,21 +67,13 @@ export default class LoginForm extends React.Component {
 			Alert.alert('错误！', '请输入正确的手机号！', );
 			return false;
 		} else {
-			Alert.alert('Tips', '模拟的验证码为123456');
+			fetch(api.getCode + '?phone=' + phone).then(e => e.text()).then(e => console.log(e))
 			this.setState({
 				codeButtonDisabled: true,
 			})
 			this.timeOutButton(60);
 		}
 		return true;
-	}
-
-	codeIsTrue() {
-		let code = this.state.code;
-		if (code === '123456')
-			return true;
-		else
-			return false;
 	}
 
 	isLogin() {
@@ -92,64 +84,49 @@ export default class LoginForm extends React.Component {
 			})
 			return false
 		}
-		if (this.codeIsTrue()) {
-			navigator.geolocation.getCurrentPosition(
-				(data) => this.doLogin(data, phone),
-				(err) => console.log(err), {
-					enableHighAccuracy: false,
-					timeout: 10000,
-				}
-			);
-			// let token = 'lcjTem';
-			// let timestamp = new Date().getTime().toString();
-			// AsyncStorage.multiSet([
-			// 	['phone', phone],
-			// 	['token', token],
-			// 	['timestamp', timestamp]
-			// ], () => console.log('loginSuccess'));
-			// this.props.navigator.pop();
-		} else {
-			this.setState({
-				codeError: '请输入正确的验证码！'
-			})
-		}
+		navigator.geolocation.getCurrentPosition(
+			(data) => this.doLogin(data, phone),
+			(err) => console.log(err), {
+				enableHighAccuracy: false,
+				timeout: 10000,
+			}
+		);
+
 	}
 
 	doLogin(data, phone) {
 		let x = data.coords.latitude;
 		let y = data.coords.longitude;
 		let position = '&position=' + x + ',' + y;
-		let oriTime = new Date().getTime().toString()
-		let timestamp = '&timestamp=' + oriTime;
-		let url = api.login + '?account=' + phone + position + timestamp;
-
-		let request = new XMLHttpRequest();
-		request.onreadystatechange = (e) => {
-			if (request.readyState !== 4) {
-				return;
-			}
-			if (request.status === 200) {
-				let res = JSON.parse(request.responseText);
-				if (res.status == 0)
-					return false;
-				let cont = res.rental;
-				let arr = [
-					['phone', phone],
-					['token', cont.token],
-					['timestamp', oriTime],
-					['position', x + ',' + y],
-					['id', cont.id.toString()]
-				];
-				AsyncStorage.multiSet(arr, (e) => console.log('error inf:', e));
-				this.props.navigator.pop();
-
-			} else {
-				console.warn('error');
-			}
-		};
-
-		request.open('GET', url);
-		request.send();
+		let code = '&code=' + this.state.code;
+		let body = 'account=' + phone + position + code;
+		fetch(api.login, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: body
+			})
+			.then((res) => res.json())
+			.then((res) => {
+				if (res.status === 1) {
+					storage.save({
+						key: 'loginState',
+						rawData: {
+							id: res.rental.id,
+							token: res.rental.token,
+							phone: phone
+						}
+					})
+					this.props.navigator.resetTo({
+						component: SelfPage
+					});
+				} else {
+					this.setState({
+						codeError: res.msg
+					})
+				}
+			});
 	}
 
 	render() {
@@ -234,3 +211,9 @@ let styles = StyleSheet.create({
 		color: 'red',
 	}
 })
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+});

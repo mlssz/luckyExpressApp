@@ -33,7 +33,7 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
-      <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="Mcv1IUAZFpeGlkbDZ5OfizI0GherSIuX"/>
+      <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="TXCLLq8nS7VwQfVMq2IQduqKogy5c2yO"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

@@ -10,6 +10,7 @@ export default config = {
 		price: '58',
 		beyondPrice: '4.0',
 		cornerColor: '#0092c7',
+		carType: 0,
 	}, {
 		img: require('./img/car-big.png'),
 		name: '大型货车',
@@ -20,6 +21,7 @@ export default config = {
 		price: '88',
 		beyondPrice: '5.0',
 		cornerColor: '#9fe0f6',
+		carType: 1,
 	}, {
 		img: require('./img/flat-small.png'),
 		name: '小型平板',
@@ -30,6 +32,7 @@ export default config = {
 		price: '60',
 		beyondPrice: '4.0',
 		cornerColor: '#f3e59a',
+		carType: 2,
 	}, {
 		img: require('./img/flat-middle.png'),
 		name: '中型平板',
@@ -40,6 +43,7 @@ export default config = {
 		price: '58',
 		beyondPrice: '4.0',
 		cornerColor: '#f3b59b',
+		carType: 3,
 	}, {
 		img: require('./img/flat-big.png'),
 		name: '大型平板',
@@ -50,6 +54,7 @@ export default config = {
 		price: '58',
 		beyondPrice: '4.0',
 		cornerColor: '#f29c9c',
+		carType: 4,
 	}],
 	selfLists: [
 		[{
@@ -91,6 +96,11 @@ export default config = {
 	api: {
 		baiduAK: 'jRsRZ7IjzEeYRiw1LeRNkM3YU140tsY0',
 		searchSuggestionPlace: 'http://api.map.baidu.com/place/v2/suggestion',
+		getPlaceName: 'http://api.map.baidu.com/geocoder/v2/',
 		login: 'http://www.oeli.pub:80/haoyun/s/rent/login.json',
+		getCode: 'http://www.oeli.pub:80/haoyun/s/yzm/yuyin/login.json',
+		nearBydriver: 'http://115.159.155.229:8123/rent/',
+		getBus: 'http://www.oeli.pub/haoyun/s/lessee/findmytrucks.json',
+		ensureOrder: 'http://www.oeli.pub/haoyun/s/order/createOne.json'
 	}
 }

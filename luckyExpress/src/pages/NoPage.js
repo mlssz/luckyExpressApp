@@ -2,24 +2,58 @@ import React from 'react';
 import {
 	Text,
 	View,
-	AsyncStorage
+	TouchableOpacity,
+	AsyncStorage,
+	StyleSheet
 } from 'react-native';
+import Storage from 'react-native-storage';
 import TopBar from '../component/TopBar.js'
 export default class NoPage extends React.Component {
 
 	logOut() {
-		AsyncStorage.multiRemove(['phone', 'token', 'timestamp', 'id'], () => console.log('log out'));
+		storage.remove({
+			key: 'loginState'
+		});
+		alert('logout!');
 	}
 
 	render() {
 		return (
-			<View>
+			<View style={{flex:1}}>
 				<TopBar title='NoPage' back navigator={this.props.navigator}/>
-				<Text>Page:{this.props.name}!</Text>
-				<Text>There is no Page!!!</Text>
-				<Text onPress={this.logOut.bind(this)}>Press this log out!!!</Text>
+				<View style={styles.middle}>
+					<Text style={styles.topText}>Page:{this.props.name}!</Text>
+					<Text style={styles.warnText}>There is no Page!!!</Text>
+					<Text style={styles.warnText}>There is no Page!!!</Text>
+					<Text style={styles.warnText}>There is no Page!!!</Text>
+					<Text style={styles.warnText}>There is no Page!!!</Text>
+					<TouchableOpacity
+						onPress={this.logOut}>
+						<Text>Press this to log out!!!</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 
 		)
 	}
 }
+
+let styles = StyleSheet.create({
+	middle: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	topText: {
+		fontSize: 20,
+	},
+	warnText: {
+		color: 'red'
+	}
+})
+
+var storage = new Storage({
+	size: 1000,
+	storageBackend: AsyncStorage,
+	defaultExpires: null,
+})

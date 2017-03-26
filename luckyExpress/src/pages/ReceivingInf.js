@@ -15,15 +15,13 @@ export default class Receivinginf extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			searchPlace: '',
+			searchPlace: this.props.road.name,
 			result: [],
 		}
 		this.search = this.search.bind(this);
 		this.renderResult = this.renderResult.bind(this);
 		this.chooseRoad = this.chooseRoad.bind(this);
 	}
-
-
 
 	search(searchPlace) {
 		let ak = '?ak=' + api.baiduAK;
@@ -57,7 +55,7 @@ export default class Receivinginf extends React.Component {
 	chooseRoad(ele) {
 		let road = {
 			name: ele.name,
-			position: '' + ele.lat + ele.lng
+			position: '' + ele.location.lat + ele.location.lng
 		}
 		let navigator = this.props.navigator;
 		let changeRoad = this.props.changeRoad;

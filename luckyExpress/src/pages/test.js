@@ -1,7 +1,3 @@
-/**
- * @author lovebing
- */
-
 import React, {
     Component,
     PropTypes
@@ -14,6 +10,7 @@ import {
 } from 'react-native-baidu-map';
 
 import {
+    Button,
     AppRegistry,
     StyleSheet,
     Text,
@@ -22,29 +19,6 @@ import {
 } from 'react-native';
 
 import Dimensions from 'Dimensions';
-
-class Buttton extends Component {
-    static propTypes = {
-        label: PropTypes.string,
-        onPress: PropTypes.func
-    };
-
-    static defaultProps = {
-        label: 'Buttton',
-        onPress() {
-
-        }
-    };
-    render() {
-        return (
-            <TouchableHighlight 
-        style={styles.btn}
-        onPress={this.props.onPress}>
-        <Text style={{color: 'white'}}>{this.props.label}</Text>
-      </TouchableHighlight>
-        );
-    }
-};
 
 export default class BaiduMapDemo extends Component {
 
@@ -72,6 +46,8 @@ export default class BaiduMapDemo extends Component {
         };
     }
 
+    componentDidMount() {}
+
     render() {
         return (
             <View style={styles.container}>
@@ -84,26 +60,31 @@ export default class BaiduMapDemo extends Component {
           marker={this.state.marker}
           markers={this.state.markers}
           style={styles.map}
+          onMarkerClick={(e) => {
+            console.warn(JSON.stringify(e));
+          }}
           onMapClick={(e) => {
           }}
         >
         </MapView>
 
         <View style={styles.row}>
-          <Buttton label="Normal" onPress={() => {
+          <Button title="Normal" onPress={() => {
             this.setState({
               mapType: MapTypes.NORMAL
             });
           }} />
-          <Buttton label="Satellite" onPress={() => {
+          <Button style={styles.btn} title="Satellite" onPress={() => {
             this.setState({
               mapType: MapTypes.SATELLITE
             });
           }} />
 
-          <Buttton label="Locate" onPress={() => {
+          <Button style={styles.btn} title="Locate" onPress={() => {
+            console.warn('center', this.state.center);
             Geolocation.getCurrentPosition()
               .then(data => {
+                console.warn(JSON.stringify(data));
                 this.setState({
                   zoom: 15,
                   marker: {
@@ -113,7 +94,8 @@ export default class BaiduMapDemo extends Component {
                   },
                   center: {
                     latitude: data.latitude,
-                    longitude: data.longitude
+                    longitude: data.longitude,
+                    rand: Math.random()
                   }
                 });
               })
@@ -124,12 +106,12 @@ export default class BaiduMapDemo extends Component {
         </View>
 
         <View style={styles.row}>
-          <Buttton label="Zoom+" onPress={() => {
+          <Button title="Zoom+" onPress={() => {
             this.setState({
               zoom: this.state.zoom + 1
             });
           }} />
-          <Buttton label="Zoom-" onPress={() => {
+          <Button title="Zoom-" onPress={() => {
             if(this.state.zoom > 0) {
               this.setState({
                 zoom: this.state.zoom - 1
@@ -140,22 +122,18 @@ export default class BaiduMapDemo extends Component {
         </View>
 
         <View style={styles.row}>
-          <Buttton label="Traffic" onPress={() => {
+          <Button title="Traffic" onPress={() => {
             this.setState({
               trafficEnabled: !this.state.trafficEnabled
             });
           }} />
 
-          <Buttton label="Baidu HeatMap" onPress={() => {
+          <Button title="Baidu HeatMap" onPress={() => {
             this.setState({
               baiduHeatMapEnabled: !this.state.baiduHeatMapEnabled
             });
           }} />
-
-
         </View>
-
-
       </View>
         );
     }
@@ -164,17 +142,7 @@ export default class BaiduMapDemo extends Component {
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
-        justifyContent: 'flex-start'
-    },
-    btn: {
-        height: 24,
-        borderRadius: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#cccccc',
-        paddingLeft: 8,
-        paddingRight: 8,
-        margin: 4
+        height: 40
     },
     container: {
         flex: 1,

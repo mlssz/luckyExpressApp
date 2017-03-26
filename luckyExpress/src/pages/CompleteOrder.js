@@ -8,7 +8,7 @@ import {
 	ScrollView,
 	TouchableHighlight,
 	TextInput,
-	TouchableOpacity
+	TouchableOpacity,
 } from 'react-native';
 import {
 	Icon
@@ -17,6 +17,10 @@ import TopBar from '../component/TopBar.js'
 import Times from '../component/Times.js'
 import Road from '../component/Road/Road.js'
 import Ensureorder from './EnsureOrder.js'
+import config from '../config.js'
+
+let api = config.api;
+
 export default class CompleteOrder extends React.Component {
 	constructor(props) {
 		super(props);
@@ -31,11 +35,45 @@ export default class CompleteOrder extends React.Component {
 			isUnload: false,
 			isReturn: false,
 			message: '',
-			price: 5,
-			times: 111,
+			price: 0,
+			times: new Date().toString(),
 		}
 		this.changeRoads = this.changeRoads.bind(this);
 		this.nextPage = this.nextPage.bind(this);
+		this.setStart = this.setStart.bind(this);
+	}
+
+	setStart() {
+		navigator.geolocation.getCurrentPosition(
+			(res) => {
+				let position = res.coords.latitude + ',' + res.coords.longitude;
+				let url = api.getPlaceName + '?location=' + position + '&output=json&ak=' + api.baiduAK;
+				fetch(url)
+					.then(res => res.json())
+					.then(res => {
+						let location = res.result.formatted_address + '(当前地址)';
+						let roads = [{
+							name: location,
+							position: position
+						}, {
+							name: '',
+							position: ''
+						}];
+						this.setState({
+							roads
+						})
+					});
+			},
+			(error) => alert(error.message), {
+				enableHighAccuracy: false,
+				timeout: 20000,
+				maximumAge: 1000
+			}
+		);
+	}
+
+	componentWillMount() {
+		this.setStart();
 	}
 
 	changeRoads(roads) {
@@ -48,15 +86,21 @@ export default class CompleteOrder extends React.Component {
 		let state = this.state;
 		let car = this.props.car;
 		let navigator = this.props.navigator;
+		let user = this.props.user;
+		let orderInf = {
+			isUnload: state.isUnload,
+			isReturn: state.isReturn,
+			price: state.price,
+			roads: state.roads,
+			times: state.times,
+			message: state.message
+		};
 		navigator.push({
 			component: Ensureorder,
 			params: {
 				car: car,
-				isUnload: state.isUnload,
-				isReturn: state.isReturn,
-				price: state.price,
-				roads: state.roads,
-				times: state.times
+				orderInf: orderInf,
+				user: user,
 			}
 		})
 	}
@@ -122,8 +166,8 @@ export default class CompleteOrder extends React.Component {
 								alignItems:'center',
 								backgroundColor:returnColor,
 								paddingHorizontal:20}}>
-								<Text>需带回单</Text>
-								<Text>(免费)</Text>
+								<Text>自主选车</Text>
+								<Text>(低价)</Text>
 							</View>
 						</TouchableHighlight>
 					</View>
