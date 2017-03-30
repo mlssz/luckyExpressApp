@@ -13,7 +13,8 @@ import {
 import TopBar from '../component/TopBar.js';
 import RowTwoText from '../component/EnsureOrder/RowTwoText.js';
 import RowTwoEle from '../component/EnsureOrder/RowTwoEle.js';
-import ChooseDriver from './ChooseDriver';
+import ChooseDriver from './ChooseDriver.js';
+import OrderResult from './OrderResult.js'
 import config from '../config.js'
 export default class EnsureOrder extends React.Component {
 	constructor(props) {
@@ -32,11 +33,17 @@ export default class EnsureOrder extends React.Component {
 			let orderInf = this.props.orderInf;
 			orderInf.payTime = this.state.payTime;
 			orderInf.payType = this.state.payType;
+			orderInf.uid = data.order.id;
+			orderInf.startplace = data.order.startplace;
+			orderInf.startplacex = data.order.startplacex;
+			orderInf.startplacey = data.order.startplacey;
+			let component = !orderInf.isReturn ? OrderResult : ChooseDriver;
 			this.props.navigator.push({
-				component: ChooseDriver,
+				component: component,
 				params: {
 					car: car,
-					orderInf: orderInf
+					orderInf: orderInf,
+					user: this.props.user
 				}
 			})
 		} else {

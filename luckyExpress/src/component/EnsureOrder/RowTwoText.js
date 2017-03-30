@@ -55,12 +55,12 @@ let styles = StyleSheet.create({
 	},
 	leftValueStyle: {
 		flex: 1,
-		fontSize: 12,
+		fontSize: 15,
 		textAlign: 'center',
 	},
 	rightValueStyle: {
 		flex: 3,
-		fontSize: 12,
+		fontSize: 15,
 		color: 'black',
 		textAlign: 'left',
 	},

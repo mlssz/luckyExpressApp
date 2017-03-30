@@ -15,6 +15,8 @@ import {
 	Geolocation
 } from 'react-native-baidu-map';
 import TopBar from '../component/TopBar.js';
+import config from '../config.js'
+import OrderResult from './OrderResult.js'
 
 export default class ContinueOrder extends React.Component {
 	constructor(props) {
@@ -27,24 +29,47 @@ export default class ContinueOrder extends React.Component {
 		let x = this.state.x;
 		let y = this.state.y;
 		let name = this.state.name;
-		this.setState({
-			center: {
-				longitude: x,
-				latitude: y
-			},
-			marker: {
-				latitude: y,
-				longitude: x,
-				title: name,
-			},
-		})
+		// this.setState({
+		// 	center: {
+		// 		longitude: x,
+		// 		latitude: y
+		// 	},
+		// 	marker: {
+		// 		latitude: y,
+		// 		longitude: x,
+		// 		title: name,
+		// 	},
+		// })
 	}
 
 	nextPage() {
-		// this.props.navigator.push({
-		// 	component: null,
-		// 	params: this.state,
-		// })
+		console.log('props_cO', this.props);
+		let user = this.props.user;
+		let url = config.api.rentchoosealessee;
+		let uid = 'uid=' + user.id;
+		let token = '&token=' + user.token;
+		let orderid = '&orderid=' + this.props.orderid;
+		let lessee = '&lessee=' + this.props.lessee;
+		fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: uid + token + orderid + lessee
+			})
+			.then(res => res.json())
+			.then(res => {
+				if (res.status === 1) {
+					this.props.navigator.push({
+						component: OrderResult,
+						params: {
+							'orderInf': this.props.orderInf,
+							'user': this.props.user
+						}
+					})
+				}
+			});
+
 	}
 
 	render() {

@@ -5,6 +5,7 @@ import {
 	Icon
 } from 'react-native-elements';
 import ReceiveOrder from './ReceiveOrder.js'
+import OrderManage from './OrderManage.js'
 import NoPage from './NoPage.js'
 
 export default class Index extends React.Component {
@@ -40,7 +41,7 @@ export default class Index extends React.Component {
 					renderIcon={() => <Icon containerStyle={{justifyContent: 'center', alignItems: 'center', marginTop: 12}} color={'#5e6977'} name='local-offer' size={33}/>}
 					renderSelectedIcon={() => <Icon color={'#6296f9'} name='local-offer' size={30}/>}
 					onPress={() => this.changeTab('longOrder')}>
-					<NoPage />
+					<NoPage navigator={this.props.navigator}/>
 				</Tab>
 				<Tab
 					selected={selectedTab === 'orderCorl'}
@@ -48,7 +49,7 @@ export default class Index extends React.Component {
 					renderIcon={() => <Icon containerStyle={{justifyContent: 'center', alignItems: 'center', marginTop: 12}} color={'#5e6977'} name='event-note' size={33}/>}
 					renderSelectedIcon={() => <Icon color={'#6296f9'} name='event-note' size={30}/>}
 					onPress={() => this.changeTab('orderCorl')}>
-					<NoPage />
+					<OrderManage navigator={this.props.navigator}/>
 				</Tab>
 				<Tab
 					selected={selectedTab === 'self'}

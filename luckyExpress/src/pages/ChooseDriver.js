@@ -63,32 +63,30 @@ export default class ChooseDriver extends React.Component {
 		});
 	}
 
-	getDriver() {
-		let url = api.nearBydriver;
-		storage.load({
-				key: 'loginState'
-			})
-			.then((res) => {
-				let uid = res.id;
-				let token = 'token=' + res.token;
-				let positionx = '&positionx=' + this.state.center.longitude;
-				let positiony = '&positiony=' + this.state.center.latitude;
-				let limit = '&limit=10000';
-				// let carType = '&carType='+this.props.car.catType;
-				let carType = '&cartype=' + Math.floor(Math.random() * 5);
-				url = url + uid + '/near_lessees?' + token + positiony + positionx + limit + carType;
-				fetch(url, {
-						method: 'GET',
-						headers: {
-							'Accept': 'application/json',
-							'Content-Type': 'application/json',
-						},
-					})
-					.then((res) => res.json())
-					.then((res) => this.markDriver(res));
-			})
-			.catch(err => console.warn(err.message));
+	componentWillUnmount() {
+		clearTimeout(this.getId);
+	}
 
+	getDriver() {
+		let url = api.rentchoosestatus;
+		let uid = 'uid=' + this.props.user.id;
+		let token = '&token=' + this.props.user.token;
+		let id = '&orderid=' + this.props.orderInf.uid;
+		fetch(url, {
+				"method": "POST",
+				'headers': {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				'body': uid + token + id
+			})
+			.then(res => res.json())
+			.then(res => {
+				if (res.status === 1) {
+					let datas = res.lessees;
+					this.markDriver(datas);
+				}
+			})
+		this.getId = setTimeout(() => this.getDriver(), 1000);
 	}
 
 	markDriver(datas) {
@@ -97,9 +95,9 @@ export default class ChooseDriver extends React.Component {
 			datas = [];
 		for (data of datas) {
 			let marker = {
-				latitude: data.position_y,
-				longitude: data.position_x,
-				title: data.user.name.toString(),
+				latitude: data.positionY,
+				longitude: data.positionX,
+				title: data.realName,
 			};
 			markers.push(marker);
 		}
@@ -134,7 +132,6 @@ export default class ChooseDriver extends React.Component {
 	}
 
 	render() {
-		console.log(this.props)
 		let small = this.state.modalVisible ? {
 			height: 200
 		} : {};
@@ -164,7 +161,10 @@ export default class ChooseDriver extends React.Component {
 					modalVisible={this.state.modalVisible}
 					datas={this.state.datas}
 					car={this.props.car}
+					user={this.props.user}
+					orderInf={this.props.orderInf}
 					driverCount={this.state.driverCount}
+					orderid={this.props.orderInf.uid}
 					navigator={this.props.navigator}/>
 			</View>
 		)

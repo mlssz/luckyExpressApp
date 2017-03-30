@@ -80,6 +80,31 @@ export default class CompleteOrder extends React.Component {
 		this.setState({
 			roads: roads,
 		})
+		this.calcultePrice(roads);
+	}
+
+	calcultePrice(roads) {
+		let price = Number.parseInt(this.props.car.price);
+		let beyondPrice = Number.parseInt(this.props.car.beyondPrice);
+		let origins = '?origins=' + roads[0].position;
+		let destinations = '&destinations=' + roads[roads.length - 1].position;
+		let output = '&output=json'
+		let ak = '&ak=' + config.api.baiduAK;
+		let url = config.api.calculteRoute + origins + destinations + output + ak;
+		console.log(url)
+		fetch(url)
+			.then(res => res.json())
+			.then(res => {
+				if (!res.status) {
+					let distance = res.result[0].distance.value;
+					console.warn(distance)
+					let maybePrice = Math.floor(price + (distance - 5000) / 1000 * beyondPrice);
+					price = maybePrice >= price ? maybePrice : price;
+					this.setState({
+						price
+					})
+				}
+			});
 	}
 
 	nextPage() {
@@ -132,7 +157,7 @@ export default class CompleteOrder extends React.Component {
 
 				<Road 
 					roads={this.state.roads} 
-					changeRoads={this.changeRoads}
+					changeRoads = {this.changeRoads}
 					navigator={this.props.navigator}/>
 
 				<View style={[styles.chooseView,styles.rowBlock]}>

@@ -98,5 +98,7 @@ export default config = {
 		completeInf: 'http://www.oeli.pub/haoyun/s/lessee/finishmyinfo.json',
 		lesseeChoose: 'http://www.oeli.pub/haoyun/s/order/lesseechoose.json',
 		rentChoose: 'http://www.oeli.pub/haoyun/s/order/rentchoose.json',
-	}
+		getLesseeAll: 'http://www.oeli.pub/haoyun/s/order/getLesseeAll.json',
+	},
+	orderType: ['系统', '自主', '长期', '已接单', '已完成', '已取消', '预约']
 }

@@ -55,7 +55,7 @@ export default class Receivinginf extends React.Component {
 	chooseRoad(ele) {
 		let road = {
 			name: ele.name,
-			position: '' + ele.location.lat + ele.location.lng
+			position: '' + ele.location.lat + ',' + ele.location.lng
 		}
 		let navigator = this.props.navigator;
 		let changeRoad = this.props.changeRoad;

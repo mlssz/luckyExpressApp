@@ -11,6 +11,7 @@ import {
 } from 'react-native-elements'
 import SelectCar from './SelectCar.js'
 import SelfPage from './SelfPage.js'
+import OrderManage from './OrderManage.js'
 import NoPage from './NoPage.js'
 
 export default class MainPage extends React.Component {
@@ -49,7 +50,7 @@ export default class MainPage extends React.Component {
 					renderSelectedIcon={()=><Icon name='assignment' color='black'/>}
 					onPress={()=>{this.setState({selected:'order'})}}
 				>
-				<NoPage navigator={this.props.navigator} name={this.state.selected}/>
+				<OrderManage navigator={this.props.navigator} name={this.state.selected}/>
 				</Tab>
 				<Tab
 					title={this.state.selected==='self'?'个人':null}

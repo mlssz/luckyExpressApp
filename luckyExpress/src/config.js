@@ -97,10 +97,17 @@ export default config = {
 		baiduAK: 'jRsRZ7IjzEeYRiw1LeRNkM3YU140tsY0',
 		searchSuggestionPlace: 'http://api.map.baidu.com/place/v2/suggestion',
 		getPlaceName: 'http://api.map.baidu.com/geocoder/v2/',
+		calculteRoute: 'http://api.map.baidu.com/routematrix/v2/driving',
 		login: 'http://www.oeli.pub:80/haoyun/s/rent/login.json',
 		getCode: 'http://www.oeli.pub:80/haoyun/s/yzm/yuyin/login.json',
 		nearBydriver: 'http://115.159.155.229:8123/rent/',
 		getBus: 'http://www.oeli.pub/haoyun/s/lessee/findmytrucks.json',
-		ensureOrder: 'http://www.oeli.pub/haoyun/s/order/createOne.json'
-	}
+		ensureOrder: 'http://www.oeli.pub/haoyun/s/order/createOne.json',
+		getOneById: 'http://www.oeli.pub/haoyun/s/order/getOneById.json',
+		rentchoosestatus: 'http://www.oeli.pub/haoyun/s/order/rentchoosestatus.json',
+		getRentalAll: 'http://www.oeli.pub/haoyun/s/order/getRentalAll.json',
+		rentchoosealessee: 'http://www.oeli.pub/haoyun/s/order/rentchoosealessee.json',
+		confirmOne: 'http://www.oeli.pub/haoyun/s/order/confirmOne.json',
+	},
+	orderType: ['系统', '自主', '长期', '已接单', '已完成', '已取消', '预约']
 }

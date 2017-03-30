@@ -9,7 +9,8 @@ import {
 	Icon
 } from 'react-native-elements';
 import EnsureRec from '../pages/EnsureRec.js'
-
+import OrderInf from '../pages/OrderInf.js'
+import config from '../config.js'
 export default class OrderItems extends React.Component {
 	constructor(props) {
 		super(props);
@@ -20,8 +21,9 @@ export default class OrderItems extends React.Component {
 	}
 
 	nextPage() {
+		let component = this.props.toOrder ? OrderInf : EnsureRec;
 		this.props.navigator.push({
-			component: EnsureRec,
+			component: component,
 			params: {
 				order: this.state.order
 			}
@@ -30,13 +32,7 @@ export default class OrderItems extends React.Component {
 
 	render() {
 		let order = this.state.order;
-		let type = null;
-		if (order.status === 6)
-			type = '预约';
-		if (order.status === 0)
-			type = '系统';
-		if (order.status === 1)
-			type = '自主';
+		let type = config.orderType[order.status];
 		let color = {
 			backgroundColor: order.status === 6 ? '#00CEAC' : '#DF5C62'
 		};

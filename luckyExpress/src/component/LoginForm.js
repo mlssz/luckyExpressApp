@@ -21,8 +21,8 @@ export default class LoginForm extends React.Component {
 		super(props);
 		this.state = {
 			codeButtonColor: '#f55064',
-			phone: '18768115873',
-			code: '018621',
+			phone: '',
+			code: '',
 			codeButtonValue: '获取验证码',
 			codeButtonDisabled: true,
 			loginButtonDisabled: true,
@@ -115,7 +115,9 @@ export default class LoginForm extends React.Component {
 						rawData: {
 							id: res.rental.id,
 							token: res.rental.token,
-							phone: phone
+							phone: phone,
+							x: x,
+							y: y,
 						}
 					})
 					this.props.navigator.resetTo({

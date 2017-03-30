@@ -47,9 +47,12 @@ export default class ChooseDriverModal extends React.Component {
 				return (
 					<DriverBar 
 						data={data} 
-						key={data.user.name} 
+						user={this.props.user}
+						key={data.name}
+						orderInf={this.props.orderInf}
 						navigator={this.props.navigator}
 						car={this.props.car}
+						orderid={this.props.orderid}
 						closeModal={this.state.closeModal}/>
 				)
 			})

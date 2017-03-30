@@ -15,6 +15,8 @@ export default class DriverBar extends React.Component {
 		super(props);
 		this.state = {
 			place: '',
+			user: this.props.user,
+			orderInf: this.props.orderInf,
 		}
 		this.continueOrder = this.continueOrder.bind(this);
 		this.getPlace = this.getPlace.bind(this);
@@ -23,45 +25,52 @@ export default class DriverBar extends React.Component {
 	//设置单个司机信息
 	componentWillMount() {
 		this.getPlace();
-		let name = this.props.data.user.name;
+		let name = this.props.data.name;
 		let star = this.props.data.score;
-		let distance = Math.floor(this.props.data.distance);
 		let carType = this.props.car.name;
 		let price = this.props.car.price;
 		let dealNum = this.props.data.order_count;
-		let no = this.props.data.truck;
-		let account = this.props.data.user.account;
+		let no = this.props.data.no || 'null';
+		let account = this.props.data.account;
+		let orderid = this.props.orderid;
+		let lessee = this.props.data.id;
 		this.setState({
 			name,
 			star,
-			distance,
 			carType,
 			dealNum,
 			price,
 			no,
-			account
+			account,
+			orderid,
+			lessee
 		})
 	}
 
 	//获得司机地址信息
 	getPlace() {
-		let x = this.props.data.position_x;
-		let y = this.props.data.position_y;
-		let location = '?location=' + y + ',' + x;
+		let x = this.props.user.x;
+		let y = this.props.user.y;
+		let driverX = this.props.data.positionX;
+		let driverY = this.props.data.positionY;
+		let distance = Math.floor(6370 * 1000 * Math.acos(Math.cos(driverY) * Math.cos(y) * Math.cos(driverX - x) + Math.sin(driverY) * Math.sin(y)));
+		let location = '?location=' + driverX + ',' + driverY;
 		let ak = '&ak=' + api.baiduAK;
 		let url = api.getPlaceName + location + '&output=json' + ak;
 		fetch(url)
 			.then(res => res.json())
 			.then(res => {
 				this.setState({
-					x,
-					y,
+					driverX,
+					driverY,
+					distance,
 					place: res.result.formatted_address
 				})
 			})
 	}
 
 	continueOrder() {
+		console.log('props_db', this.props)
 		this.props.closeModal();
 		this.props.navigator.push({
 			params: this.state,
@@ -70,7 +79,6 @@ export default class DriverBar extends React.Component {
 	}
 
 	render() {
-
 		return (
 			<TouchableOpacity 
 				style={styles.container}

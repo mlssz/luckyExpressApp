@@ -7,7 +7,8 @@ import {
 	StyleSheet
 } from 'react-native';
 import Storage from 'react-native-storage';
-import TopBar from '../component/TopBar.js'
+import TopBar from '../component/TopBar.js';
+import App from '../App.js';
 export default class NoPage extends React.Component {
 
 	logOut() {
@@ -15,6 +16,9 @@ export default class NoPage extends React.Component {
 			key: 'loginState'
 		});
 		alert('logout!');
+		this.props.navigator.resetTo({
+			component: App
+		})
 	}
 
 	render() {
@@ -28,7 +32,7 @@ export default class NoPage extends React.Component {
 					<Text style={styles.warnText}>There is no Page!!!</Text>
 					<Text style={styles.warnText}>There is no Page!!!</Text>
 					<TouchableOpacity
-						onPress={this.logOut}>
+						onPress={this.logOut.bind(this)}>
 						<Text>Press this to log out!!!</Text>
 					</TouchableOpacity>
 				</View>
